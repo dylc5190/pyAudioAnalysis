@@ -63,6 +63,29 @@ def convertFsDirWavToWav(dirName, Fs, nC):
         print(command)
         os.system(command)
 
+def readAudioSegment(audioSegment):
+    '''
+    mimic readAudioFile but input is a segment read by AudioSegment.from_file
+    '''
+
+    if audioSegment.sample_width==2:
+        data = numpy.fromstring(audioSegment._data, numpy.int16)
+    elif audioSegment.sample_width==4:
+        data = numpy.fromstring(audioSegment._data, numpy.int32)
+    else:
+        return (-1, -1)
+    Fs = audioSegment.frame_rate
+    x = []
+    for chn in list(range(audioSegment.channels)):
+        x.append(data[chn::audioSegment.channels])
+    x = numpy.array(x).T
+
+    if x.ndim==2:
+        if x.shape[1]==1:
+            x = x.flatten()
+
+    return (Fs, x)
+
 def readAudioFile(path):
     '''
     This function returns a numpy array that stores the audio samples of a specified WAV of AIFF file
