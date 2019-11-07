@@ -78,8 +78,13 @@ def classifierWrapper(classifier, classifier_type, test_sample):
                     classifier_type == "gradientboosting" or \
                     classifier_type == "extratrees" or \
                     classifier_type == "svm_rbf":
-        R = classifier.predict(test_sample.reshape(1,-1))[0]
-        P = classifier.predict_proba(test_sample.reshape(1,-1))[0]
+        try:
+          R = classifier.predict(test_sample.reshape(1,-1))[0]
+          P = classifier.predict_proba(test_sample.reshape(1,-1))[0]
+        except:
+          R = 0
+          P = [0,1]
+
     return [R, P]
 
 
